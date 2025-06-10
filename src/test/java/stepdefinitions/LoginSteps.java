@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import pages.InventoryPage;
 import pages.LoginPage;
-
+import org.openqa.selenium.chrome.ChromeOptions;
 import static org.junit.Assert.*;
 
 public class LoginSteps {
@@ -18,10 +18,15 @@ public class LoginSteps {
 
     @Before
     public void setup() {
-        driver = new ChromeDriver();
-        driver.get("https://www.saucedemo.com");
-        loginPage = new LoginPage(driver);
-    }
+    ChromeOptions options = new ChromeOptions();
+    options.addArguments("--headless"); // ✅ Penting agar bisa jalan di CI (tanpa GUI)
+    options.addArguments("--no-sandbox");
+    options.addArguments("--disable-dev-shm-usage");
+
+    driver = new ChromeDriver(options); // Gunakan ChromeOptions
+    driver.get("https://www.saucedemo.com");
+    loginPage = new LoginPage(driver);
+}
 
     @After
     public void tearDown() {
