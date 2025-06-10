@@ -16,12 +16,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install wget and unzip
+        run: |
+          apt-get update
+          apt-get install -y wget unzip
+
       - name: Install Gradle
         run: |
           wget https://services.gradle.org/distributions/gradle-7.6-bin.zip
           unzip gradle-7.6-bin.zip
-          sudo mv gradle-7.6 /opt/gradle
-          sudo ln -s /opt/gradle/bin/gradle /usr/bin/gradle
+          mv gradle-7.6 /opt/gradle
+          ln -s /opt/gradle/bin/gradle /usr/bin/gradle
 
       - name: Run tests with Gradle
         run: |
