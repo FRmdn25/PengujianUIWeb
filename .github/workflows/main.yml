@@ -9,21 +9,37 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container:
-      image: seleniarm/standalone-chromium:latest  # Ganti dengan image yang punya Selenium & Chromium
+
+    services:
+      selenium:
+        image: seleniarm/standalone-chromium
+        ports:
+          - 4444:4444
+        options: >-
+          --shm-size 2g
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install unzip and Gradle manually
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install Gradle
         run: |
-          apt-get update && apt-get install -y unzip wget
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
           wget https://services.gradle.org/distributions/gradle-7.6-bin.zip
           unzip gradle-7.6-bin.zip
-          mv gradle-7.6 /opt/gradle
-          ln -s /opt/gradle/bin/gradle /usr/bin/gradle
+          sudo mv gradle-7.6 /opt/gradle
+          sudo ln -s /opt/gradle/bin/gradle /usr/bin/gradle
 
       - name: Run tests
+        env:
+          SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
         run: gradle clean test
 
       - name: Upload test results
