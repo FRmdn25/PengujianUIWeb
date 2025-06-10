@@ -8,29 +8,23 @@ on:
 
 jobs:
   test:
-    name: Run Selenium UI Tests
     runs-on: ubuntu-latest
     container:
-      image: openjdk:17-jdk-slim
+      image: seleniarm/standalone-chromium:latest  # Ganti dengan image yang punya Selenium & Chromium
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install wget and unzip
+      - name: Install unzip and Gradle manually
         run: |
-          apt-get update
-          apt-get install -y wget unzip
-
-      - name: Install Gradle
-        run: |
+          apt-get update && apt-get install -y unzip wget
           wget https://services.gradle.org/distributions/gradle-7.6-bin.zip
           unzip gradle-7.6-bin.zip
           mv gradle-7.6 /opt/gradle
           ln -s /opt/gradle/bin/gradle /usr/bin/gradle
 
-      - name: Run tests with Gradle
-        run: |
-          gradle clean test
+      - name: Run tests
+        run: gradle clean test
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
